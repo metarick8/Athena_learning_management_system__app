@@ -13,9 +13,9 @@ class SubscriptionController extends Controller
 {
     public function subscripe(Request $request){
         $user_id=Auth::id();
-        $user=User::find($user_id);
-        $course=course::find($request->course_id);
-        $tutor = User::find(Tutor::find($course->tutor_id)->user_id);
+        $user=User::where("user_id",$user_id)->get();
+        $course=course::where("course_id",$request->course_id)->get();
+        $tutor = User::where("user_id",Tutor::where("tutor_id",$course->tutor_id)->get()->user_id)->get();
         $fan=new FanController();
         $is_fan=$fan->is_fan($user_id,$course->tutor_id);
         $price= $course->price;

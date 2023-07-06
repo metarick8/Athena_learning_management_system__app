@@ -13,9 +13,12 @@ class VideoController extends Controller
             'path' => $request->path,
             'module_id'=>1,
         ]);
+        return response()->json([
+            "massage"=>"Video has been added Sucsessfully!",
+        ]);
     }
     public function showVideo($id){
-        $video =Video::find($id);
+        $video =Video::where("video_id",$id)->first();
         return response()->json([
             "course"=>$video
         ]);

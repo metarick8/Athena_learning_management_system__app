@@ -16,9 +16,12 @@ class ModuleController extends Controller
             'has_quiz'=>true,
             'course_id' =>2,
         ]);
+        return response()->json([
+            "massage"=>"Module has been added Sucsessfully!",
+        ]);
     }
-    public function showModule(Request $request,$id){
-        $module =Module::find($id);
+    public function showModule($id){
+        $module =Module::where("module_id",$id)->first();
         return response()->json([
             "course"=>$module
         ]);

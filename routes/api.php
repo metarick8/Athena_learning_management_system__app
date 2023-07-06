@@ -9,6 +9,8 @@ use App\Http\Controllers\RateController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\WatchLaterController;
 use App\Http\Controllers\BookmarkController;
+use App\Http\Controllers\PrivateCourseController;
+use App\Http\Controllers\SubscriptionForPrivateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,12 +29,12 @@ Route::post('/login', [UserController::class, 'login']);
 //////////////////////Course///////////////////////////
 Route::get('/showall', [CourseController::class, 'getCourses']);
 Route::post('/addCourse', [CourseController::class, 'addCourse']);
-Route::post('/delete/{id}', [CourseController::class, 'deleteCourse']);
+Route::delete('/delete/{id}', [CourseController::class, 'deleteCourse']);
 Route::get('/showCourse/{id}', [CourseController::class, 'showCourse']);
-Route::get('/search', [CourseController::class, 'findCourse']);///?
+Route::post('/search/{id}', [CourseController::class, 'findCourse']);///?
 /////////////////////Module////////////////////////////
 Route::post('/addModule', [ModuleController::class, 'addModule']);
-Route::get('/showModule/{id}', [ModuleController::class, 'showModule']);
+Route::post('/showModule/{id}', [ModuleController::class, 'showModule']);
 ////////////////////Video/////////////////////////////
 Route::post('/addVideo', [VideoController::class, 'addVideo']);
 Route::get('/showVideo/{id}', [VideoController::class, 'showVideo']);
@@ -49,3 +51,8 @@ Route::get('/watchList', [WatchLaterController::class, 'getWatch']);
 /////////////////Book_Mark//////////////////////////
 Route::post('/bookmark/{id}', [BookmarkController::class, 'bookmark']);
 Route::get('/getbookmarks', [BookmarkController::class, 'getbookmarks']);
+/////////////////Private_Course/////////////////////
+Route::post('/addPrivate', [PrivateCourseController::class, 'add_Private_Course']);
+/////////////////Private_Subscription///////////////
+Route::post('/PrivateSubscripe', [SubscriptionForPrivateController::class, 'Private_subscripe']);
+

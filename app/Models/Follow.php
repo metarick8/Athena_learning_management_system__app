@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Follow extends Model
 {
     use HasFactory;
+    protected $table='follow';
     protected $primaryKey = 'follow_id';
     protected $fillable = [
         'user_id',

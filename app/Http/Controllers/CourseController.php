@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Course;
+use App\Models\Tutor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,20 +27,18 @@ class CourseController extends Controller
             'price' => $request->price,
             'level' => $request->level,
             'tutor_id'=> 2,
-            'category_id'=>1,
+            'category_id'=>2,
             'total_course_duration'=> '11:11:11',
             'total_modules' => 3,
         ]);
         $course->save();
-        echo 'hi';
         return response()->json([
-            "course"=> $course->course_id,
+            "course"=> $course,
         ]);
     }
     public function deleteCourse($id){
-        $course=Course::find($id);
+        $course=Course::where("course_id",$id);
         $course->delete();
-        $course->save();
         return response()->json([
             "course"=>"done baby ",
         ]);
@@ -50,29 +49,21 @@ class CourseController extends Controller
             "course"=>$course
         ]);
     }
-    public function findCourse($id){
+    public function findCourse(Request $request,$id){
         switch($id){
-            //category
+            //category -> id=1
             case 1:{
-                $course=Course::find($id);
+                $courses=Course::where("category_id",$request->category)->get();
                 return response()->json([
-                    "course"=>$course
+                    "course"=>$courses
                 ]);
             }
             break;
-            //tutor
+            //tutor -> id=2
             case 2:{
-                $course=Course::find($id);
+                $courses=Course::where("tutor_id",$request->tutor)->get();
                 return response()->json([
-                    "course"=>$course
-                ]);
-            }
-            break;
-            //top rating
-            case 3:{
-                $course=Course::find($id);
-                return response()->json([
-                    "course"=>$course
+                    "course"=>$courses
                 ]);
             }
             break;

@@ -12,19 +12,25 @@ class RateController extends Controller
 {
     public function addRate(Request $request,$id){
         $user_id=Auth::id();
-        $Subscription=Subscription::where('user_id',$user_id)->where('course_id',$id);
-        if($Subscription==null){
+        $Subscription=Subscription::where([
+            ['user_id', '=', $user_id],
+            ['course_id', '=', $id]
+        ])
+        ->first();
+        if($Subscription==[]){
             return response()->json([
                 "Sorry"=>"you Don't authorized to Rate anyone !",
             ]);
         }
         else{
-        Rate::create([
-            'subscription_id' => $Subscription->subscription_id,
-            'user_id'=>$user_id,
-            'course_id'=>$id,
-            'rate' => $request->rate,
-        ]);
+            Rate::create([
+                'user_id'=>$user_id,
+                'course_id'=>$id,
+                'rate' => $request->rate,
+            ])->save();
+            return response()->json([
+                "Thanks"=>"For ur opinion!",
+            ]);
     }
     }
     public function getRate($id){
