@@ -60,6 +60,7 @@ class UserController extends Controller
         if(!Auth::attempt(['email' => $request->email, 'password' => $request->password]))
             return  $this->error('','Credentials do not match', 401);
         $user = User::where('email', $request->email)->first();
+
         /*
         if($user->is_tutor)
             return $this->success([
