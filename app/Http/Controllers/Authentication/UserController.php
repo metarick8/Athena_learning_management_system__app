@@ -36,7 +36,6 @@ class UserController extends Controller
         use Laravel\Passport\PersonalAccessTokenResult;*/
         //return response()->json(['user' => $user]);
 // Create a new access token
-        
         return response()->json([
             'user' => new UserResource($user),
             'token' => $user->createToken('API Token of ' . $user->name)->accessToken
