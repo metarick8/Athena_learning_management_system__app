@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('password');
             $table->enum('gender', ['male', 'female'])->default('male');
             $table->integer('phone_number')->default('1234567890');
-            $table->smallInteger('budget')->default('0');
+            $table->smallInteger('budget')->default(0);
             $table->boolean('is_tutor')->default(false);
             $table->timestamps();
         });
