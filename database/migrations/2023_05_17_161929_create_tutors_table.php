@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('certification');
             $table->string('c_v');
             $table->timestamps();
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

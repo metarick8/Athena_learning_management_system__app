@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('percent');
             $table->boolean('is_finished')->default(false);
             $table->timestamps();
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('video_id')->references('video_id')->on('videos');
         });
     }

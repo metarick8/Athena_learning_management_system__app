@@ -21,6 +21,8 @@ class Course extends Model
         'level',
         'total_course_duration',
         'total_modules',
+        'cover_path',
+        'path'
     ];
 
     public function tutor(): BelongsTo{
@@ -31,9 +33,6 @@ class Course extends Model
     }
     public function modules(): HasMany{
         return $this->hasMany(Module::class, 'course_id', 'course_id');
-    }
-    public function attached_files(): HasMany{
-        return $this->hasMany(Attached_file::class, 'course_id', 'course_id');
     }
     public function users(): BelongsToMany{
         return $this->belongsToMany(User::class, 'watch_later', 'course_id', 'user_id');

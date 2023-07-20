@@ -18,7 +18,7 @@ return new class extends Migration
             $table->double('rate');
             $table->text('opinion')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('course_id')->references('course_id')->on('courses');
         });
     }

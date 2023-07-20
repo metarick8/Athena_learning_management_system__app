@@ -21,6 +21,8 @@ return new class extends Migration
             $table->enum('level', ['beginner', 'intermediate', 'advanced']);
             $table->time('total_course_duration');
             $table->smallInteger('total_modules');
+            $table->string('path');
+            $table->string('cover_path');
             $table->timestamps();
             $table->foreign('tutor_id')->references('tutor_id')->on('tutors');
             $table->foreign('category_id')->references('category_id')->on('categories');

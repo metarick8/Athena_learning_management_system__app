@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Authentication\TutorController;
 use App\Http\Controllers\Authentication\UserController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ModuleController;
@@ -14,20 +15,19 @@ use App\Http\Controllers\SubscriptionForPrivateController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+//Authentication
 /*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
-Route::post('/register', [UserController::class,'register']);
+Route::post('/UserRegister', [UserController::class,'register']);
 Route::post('/login', [UserController::class,'login']);
-Route::post('/register', [UserController::class, 'register']);
-Route::post('/login', [UserController::class, 'login']);
+*/
+Route::controller(UserController::class)->group(function(){
+    Route::post('UserRegister', 'register');
+    Route::post('login', 'login');
+    Route::get('logout', 'logout');
+})->middleware('auth:api');
+Route::post('TutorRegister', [TutorController::class, 'register']);
+
+
 //////////////////////Course///////////////////////////
 Route::get('/showall', [CourseController::class, 'getCourses']);
 Route::post('/addCourse', [CourseController::class, 'addCourse']);

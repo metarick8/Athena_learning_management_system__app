@@ -12,6 +12,7 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\TutorResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -20,6 +21,7 @@ class UserController extends Controller
     public function register(Request $request)
     {
        // $request->validated();
+
         $user = User::create([
             'username' => $request->username,
             'first_name' => $request->first_name,
@@ -71,4 +73,18 @@ class UserController extends Controller
             'token' => $user->createToken('API Token of ' . $user->name)->accessToken
         ]);
     }
+
+    public function logout(Request $request){
+        return Auth::guard('api')->id();
+        return $user = Auth::guard('api')->user();
+        //return Auth::guard('api')->check();
+        /*return $accessToken = Auth::user()->token()   ;
+        /*DB::table('oauth_refresh_tokens')
+        ->where('access_token_id', $accessToken->id)
+        ->update(['revoked' => true]);
+        $accessToken->revoke();*/
+
+    }
+
+
 }

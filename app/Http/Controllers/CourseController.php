@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 class CourseController extends Controller
 {
     public function getCourses(){
+
         $courses=Course::all();
         if($courses==[]){
             return response()->json([
