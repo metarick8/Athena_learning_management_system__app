@@ -7,53 +7,79 @@ use App\Models\Course;
 use App\Models\Tutor;
 use App\Models\Fan;
 use App\Http\Controllers\FanController;
+use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 class SubscriptionController extends Controller
 {
-    public function subscripe(Request $request){
+    use Response;
+    public function subscribe(Request $request){
         $user_id=Auth::id();
-        $user=User::where("user_id",$user_id)->get();
-        $course=course::where("course_id",$request->course_id)->get();
-        $tutor = User::where("user_id",Tutor::where("tutor_id",$course->tutor_id)->get()->user_id)->get();
-        $fan=new FanController();
-        $is_fan=$fan->is_fan($user_id,$course->tutor_id);
-        $price= $course->price;
-        $courses=Course::where('tutor_id',$course->tutor_id);
-        $Subscriptions=Subscription::where('user_id',$user_id)->where('course_id',$courses->course_id);
-        if($Subscriptions->count()>5){
-        Fan::create([
-            'user_id'=>$user_id,
-            'tutor_id'=>$course->tutor_id,
-        ])->save();
+        $user=User::where("id",$user_id)->first();
+        $course=course::where("course_id",$request->course_id)->first();
+        $tutor = Tutor::where('tutor_id', $course->tutor_id)->first();
+        $tutorAsUser = User::where("id",$tutor->user_id)->first();
+        $fan = new FanController();
+        $is_fan = $fan->is_fan($user_id,$course->tutor_id);
+        $price = $course->price;
+        if($is_fan){
+            $price *= 0.2;
+            if($user->budget>$price){
+                Subscription::create([
+                    'user_id' => $user_id,
+                    'course_id'=> $request->course_id ,
+                ]);
+                $user->budget = $user->budget - $price;
+                $tutor->budget = $user->budget + $price;
+                return $this->success([
+                    'message' => 'successfully subscribed as a fan',
+                    'is_fan' => true
+                ]);
+            }
+            return $this->error('', 'Amount isn\'t enough',401);
         }
-        if($is_fan==true)
-                $price=0.2*$course->price;
-        if($user->budget < $price)
-        {
-            return response()->json([
-                "sorry"=>"you Don't have enough money!",
+        if($user->budget>$price){
+            Subscription::create([
+                'user_id' => $user_id,
+                'course_id'=> $request->course_id ,
+            ]);
+            $user->budget = $user->budget - $price;
+            $tutorAsUser->budget = $user->budget + $price;
+            $count = DB::table('subscriptions')
+                ->join('courses', 'subscriptions.course_id', '=', 'courses.course_id')
+                ->where('subscriptions.user_id', $user_id)
+                ->where('courses.tutor_id', $course->tutor_id)
+                ->count();
+            if ($count==5){
+                Fan::create([
+                    'user_id'=>$user_id,
+                    'tutor_id'=>$course->tutor_id,
+                ]);
+                return $this->success([
+                    'message' => ' sunscrived and became a fan',
+                    'become_a_fan' => true,
+                ]);
+            }
+            return $this->success([
+                'message' => 'subscribed successfully',
+                'to_be_fan' => 5 - $count
             ]);
         }
-        Subscription::create([
-            'user_id' => $user_id,
-            'course_id'=> $request->course_id ,
-        ]);
-        $user->budget =  $user->budget - $price;
-        $tutor->budget =  $tutor->budget + $price;
-        return response()->json([
-                "Done"=>"your just Subscribed and you have to pay"+ $price,
-            ]);
+        return $this->error('', 'Amount isn\'t enough', 401);
+    }
+}
+/*
+
+            $courses=Course::where('tutor_id',$course->tutor_id)->get();
+            $Subscriptions=Subscription::where('user_id',$user_id)->where('course_id',$courses->course_id);
+            if($Subscriptions->count()==5){
+                Fan::create([
+                    'user_id'=>$user_id,
+                    'tutor_id'=>$course->tutor_id,
+                ]);
+                        }
     }
 
-}
-// else{
-//     $courses=Course::where('tutor_id',$course->tutor_id);
-//     foreach($cours as $courses)
-//     $Subscriptions=Subscription::where('user_id',$user_id)->where('course_id',$cours->course_id);
-//     if($Subscriptions->count()>5)
-//         Fan::create([
-//             'user_id'=>$user_id,
-//             'tutor_id'=>$course->tutor_id,
-//         ])->save();
-// }
+}*/

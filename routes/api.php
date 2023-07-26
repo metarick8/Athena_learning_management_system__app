@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Authentication\TutorController;
 use App\Http\Controllers\Authentication\UserController;
 use App\Http\Controllers\CourseController;
@@ -27,9 +28,27 @@ Route::controller(UserController::class)->group(function(){
 })->middleware('auth:api');
 Route::post('TutorRegister', [TutorController::class, 'register']);
 
+//
+Route::get('/email/verify', function () {
+    return view('auth.verif y-email');
+})->middleware('auth')->name('verification.notice');
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
 
-//////////////////////Course///////////////////////////
-Route::get('/showall', [CourseController::class, 'getCourses']);
+    return redirect('/home');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
+
+Route::group(['middleware' => 'auth:api'], function () {
+
+    //////////////////////Course///////////////////////////
+Route::get('/allCourses', [CourseController::class, 'getCourses']);
 Route::post('/addCourse', [CourseController::class, 'addCourse']);
 Route::delete('/delete/{id}', [CourseController::class, 'deleteCourse']);
 Route::get('/showCourse/{id}', [CourseController::class, 'showCourse']);
@@ -41,20 +60,26 @@ Route::post('/showModule/{id}', [ModuleController::class, 'showModule']);
 Route::post('/addVideo', [VideoController::class, 'addVideo']);
 Route::get('/showVideo/{id}', [VideoController::class, 'showVideo']);
 ///////////////////subscription///////////////////////
-Route::post('/subscripe', [SubscriptionController::class, 'subscripe']);
+Route::post('/subscribe', [SubscriptionController::class, 'subscribe']);
 ///////////////////Rate///////////////////////////////
-Route::post('/addRate/{id}', [RateController::class, 'addRate']);
+Route::post('/addRate', [RateController::class, 'addRate']);
 Route::get('/getRate/{id}', [RateController::class, 'getRate']);
 //////////////////Follow/////////////////////////////
 Route::post('/follow/{id}', [FollowController::class, 'follow']);
+Route::post('/unfollow/{id}', [FollowController::class, 'unfollow']);
+Route::get('/getFollowers', [FollowController::class, 'getFollowers']);
 //////////////////Watch_Later////////////////////////
-Route::post('/watchLater/{id}', [WatchLaterController::class, 'watch_later']);
-Route::get('/watchList', [WatchLaterController::class, 'getWatch']);
+Route::post('/addWishlist/{id}', [WatchLaterController::class, 'watch_later']);
+Route::get('/getWishlist', [WatchLaterController::class, 'getWatch']);
 /////////////////Book_Mark//////////////////////////
-Route::post('/bookmark/{id}', [BookmarkController::class, 'bookmark']);
-Route::get('/getbookmarks', [BookmarkController::class, 'getbookmarks']);
+Route::post('/addBookmark', [BookmarkController::class, 'addBookmark']);
+Route::post('/deleteBookmark', [BookmarkController::class, 'deleteBookmark']);
+Route::get('/getBookmarks', [BookmarkController::class, 'getBookmarks']);
 /////////////////Private_Course/////////////////////
 Route::post('/addPrivate', [PrivateCourseController::class, 'add_Private_Course']);
 /////////////////Private_Subscription///////////////
 Route::post('/PrivateSubscripe', [SubscriptionForPrivateController::class, 'Private_subscripe']);
+
+
+});
 

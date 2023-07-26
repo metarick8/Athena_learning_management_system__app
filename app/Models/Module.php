@@ -14,6 +14,7 @@ class Module extends Model
     protected $fillable = [
         'course_id',
         'title',
+        //'description',
         'path',
         'total_videos',
         'has_quiz',

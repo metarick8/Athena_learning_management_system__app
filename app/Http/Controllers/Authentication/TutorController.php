@@ -27,7 +27,8 @@ class TutorController extends Controller
             'picture' => $request->picture,
             'phone_number' => $request->phone_number,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'is_tutor' => true
 
         ]);
         Tutor::create([

@@ -3,41 +3,69 @@
 namespace App\Http\Controllers;
 use App\Models\Course;
 use App\Models\Tutor;
+use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
+    use Response;
     public function getCourses(){
 
-        $courses=Course::all();
+        //$courses=Course::all();
+        $courses = Course::with('modules.videos')->get();
         if($courses==[]){
             return response()->json([
                 "message"=>"no courses"
             ]);
         }
-        return response()->json([
-            "courses"=>$courses
+
+
+        return $this->success([
+            'message' => $courses
         ]);
     }
     public function addCourse(Request $request){
-        $tutor_id=Auth::id();
+        $user_id = Auth::id();
+        $tutor = Tutor::where('user_id', $user_id)->first();
+        if ($tutor)
+           $tutor_id = $tutor->tutor_id;
+
         $course =Course::create([
             'title' => $request->title,
             'description' => $request->description,
             'price' => $request->price,
             'level' => $request->level,
-            'tutor_id'=> 2,
-            'category_id'=>2,
+            'tutor_id'=> $tutor_id,
+            'category_id'=>$request->category_id,
+            'path' => 'path\to\smth',
+            'cover_path' => 'path\to\smth',
             'total_course_duration'=> '11:11:11',
             'total_modules' => 3,
         ]);
-        $course->save();
-        return response()->json([
-            "course"=> $course,
-        ]);
+
+        foreach ($request->modules as $module) {
+            $createdModule = $course->modules()->create([
+                'title' => $module['title'],
+                'description' => $module['description'],
+                'total_videos' => 3,
+                'path' => 'path',
+            ]);
+
+            foreach ($module['videos'] as $video) {
+                $createdModule->videos()->create([
+                    'title' => $video['title'],
+                    'path' => 'path',
+                    'duration' => $video['duration']
+                ]);
+            }
+        }
+
+        $course = Course::with('modules.videos')->where('course_id', $course->course_id)->get();
+        return $course;
     }
-    public function deleteCourse($id){
+
+    /*public function deleteCourse($id){
         $course=Course::where("course_id",$id);
         $course->delete();
         return response()->json([
@@ -49,7 +77,8 @@ class CourseController extends Controller
         return response()->json([
             "course"=>$course
         ]);
-    }
+    }*/
+
     public function findCourse(Request $request,$id){
         switch($id){
             //category -> id=1
@@ -68,7 +97,7 @@ class CourseController extends Controller
                 ]);
             }
             break;
-            default:return response()->json([
+            default:    return response()->json([
                 "message"=>"No Results"
             ]);
         }

@@ -12,7 +12,7 @@ trait Response{
         ], $code);
     }
 
-    protected function error($data, $message=null, $code)
+    protected function error($data=null, $message=null, $code)
     {
         return response()->json([
             'status' => false,

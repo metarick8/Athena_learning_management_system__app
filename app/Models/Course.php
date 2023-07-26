@@ -19,6 +19,7 @@ class Course extends Model
         'description',
         'price',
         'level',
+        //'rate',
         'total_course_duration',
         'total_modules',
         'cover_path',

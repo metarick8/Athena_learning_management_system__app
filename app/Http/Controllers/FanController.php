@@ -11,11 +11,10 @@ class FanController extends Controller
             ['user_id', '=', $user_id],
             ['tutor_id', '=', $tutor_id],
         ])->first();
-        if($fan != null){
+        
+        if($fan)
             return true;
-        }
-        else{
-            return false;
-        }
+        return false;
+
     }
 }

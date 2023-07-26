@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('module_id');
             $table->unsignedBigInteger('course_id');
             $table->text('title');
+            $table->text('description');
             $table->smallInteger('total_videos');
             $table->string('path');
             $table->boolean('has_quiz')->default(false);

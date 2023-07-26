@@ -12,6 +12,8 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\TutorResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -29,9 +31,12 @@ class UserController extends Controller
             'picture' => $request->picture,
             'phone_number' => $request->phone_number,
             'email' => $request->email,
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'is_tutor' => false
 
         ]);
+        /*$user->sendEmailVerificationNotification();
+        return response()->json(['message' => 'Registration successful. Please check your email for verification.']);*/
         /*$token =$user->createToken('API Token of' . $user->name)->plainTextToken;
         dd($token);
         //return response()->json(['user' => $user]);
@@ -55,12 +60,28 @@ class UserController extends Controller
 // return $accessToken;
      }
 
+     public function verify(EmailVerificationRequest $request)
+     {
+         $request->fulfill();
+
+         return response()->json(['message' => 'Email verified successfully.']);
+     }
+
+
     public function login(Request $request)
     {
         //$request->validated($request->all());
         if(!Auth::attempt(['email' => $request->email, 'password' => $request->password]))
             return  $this->error('','Credentials do not match', 401);
         $user = User::where('email', $request->email)->first();
+        if ($user->is_tutor){
+        $tutor = User::with('tutors')->where('email', $request->email)->first();
+            return $this->success([
+                'user' => new TutorResource($tutor),
+                'token' => $user->createToken('API Token of ' . $user->name)->accessToken
+            ]);
+        }
+
 
         /*
         if($user->is_tutor)
@@ -75,14 +96,18 @@ class UserController extends Controller
     }
 
     public function logout(Request $request){
-        return Auth::guard('api')->id();
-        return $user = Auth::guard('api')->user();
+        return Auth::id();
+        //return $user = Auth::guard('api')->user();
         //return Auth::guard('api')->check();
         /*return $accessToken = Auth::user()->token()   ;
         /*DB::table('oauth_refresh_tokens')
         ->where('access_token_id', $accessToken->id)
         ->update(['revoked' => true]);
         $accessToken->revoke();*/
+        /*Auth::user()->currentAccessToken()->delete();
+        return $this->success([
+            'message' => 'You have successfully been logged out and your token has been deleted.'
+        ]);*/
 
     }
 
