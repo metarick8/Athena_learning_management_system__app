@@ -114,22 +114,22 @@ class UserController extends Controller
         ]);
     }
 
-    public function logout(){
-        if(Auth::id()){
-        //return $user = Auth::guard('api')->user();
-        //return Auth::guard('api')->check();
-        /*return
+    public function logout($allDevices){
 
+        if(Auth::id()!=null){
+            if($allDevices)
+                DB::table('oauth_access_tokens')
+                    ->where('user_id', $accessToken->user_id)->delete();
 
-        //Auth::user()->currentAccessToken()->delete();*/
-        $accessToken = Auth::user()->token();
+            $accessToken = Auth::user()->token();
+            $accessToken->revoke();
+            $accessToken->delete();
 
-        $accessToken->revoke();
-        return $this->success([
-            'message' => 'You have successfully been logged out and your token has been deleted.'
-        ]);
+            return $this->success([
+                'message' => 'You have successfully been logged out and your token has been deleted.'
+            ]);
         }
-    return $this->error('', 'No token provided',401);
+        return $this->error('', 'No token provided',401);
     }
 
 
