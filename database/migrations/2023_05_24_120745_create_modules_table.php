@@ -16,8 +16,8 @@ return new class extends Migration
             $table->unsignedBigInteger('course_id');
             $table->text('title');
             $table->text('description');
-            $table->smallInteger('total_videos');
-            $table->string('path');
+            $table->smallInteger('total_videos')->default(0);
+            $table->string('path')->nullable();
             $table->boolean('has_quiz')->default(false);
             $table->timestamps();
             $table->foreign('course_id')->references('course_id')->on('courses');

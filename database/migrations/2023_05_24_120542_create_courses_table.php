@@ -19,11 +19,11 @@ return new class extends Migration
             $table->text('description');
             $table->integer('price');
             $table->enum('level', ['beginner', 'intermediate', 'advanced']);
-            $table->time('total_course_duration');
+            $table->time('total_course_duration')->default('00:00:00');
             $table->smallInteger('total_modules');
             $table->double('rate')->default(0);
-            $table->string('path');
-            $table->string('cover_path');
+            $table->string('path')->nullable();
+            $table->string('cover_path')->nullable();
             $table->timestamps();
             $table->foreign('tutor_id')->references('tutor_id')->on('tutors');
             $table->foreign('category_id')->references('category_id')->on('categories');

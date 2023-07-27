@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('module_id');
             $table->string('title');
             $table->time('duration');
-            $table->string('path');
+            $table->string('path')->nullable();
             $table->timestamps();
             $table->foreign('module_id')->references('module_id')->on('modules');
         });

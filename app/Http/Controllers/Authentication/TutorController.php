@@ -19,7 +19,6 @@ class TutorController extends Controller
     public function register(Request $request)
     {
        // $request->validated();
-
         $user = User::create([
             'username' => $request->username,
             'first_name' => $request->first_name,
@@ -31,15 +30,24 @@ class TutorController extends Controller
             'is_tutor' => true
 
         ]);
-        Tutor::create([
+
+        $tutor = Tutor::create([
             'user_id' => $user->id,
             'bio' => $request->bio,
             'rate' => 0,
-            'id_photo' => 'path',
-            'certification' => 'path',
-            'c_v' => 'path',
         ]);
-
+        $id = $request->file('identify');
+        $idPathName = $id->getClientOriginalName();
+        $idPath = $id->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
+        $certif = $request->file('certification');
+        $certifName = $certif->getClientOriginalName();
+        $certifPath = $certif->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $certifName);
+        $cv = $request->file('C-V');
+        $cvName = $cv->getClientOriginalName();
+        $cvPath = $cv->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $cvName);
+        $tutor->id_photo = $idPath;
+        $tutor->certification = $certifPath;
+        $tutor->c_v = $cvPath;
         $tutor = User::with('tutor')->find($user->id);
         return response()->json([
             'tutor' => new TutorResource($tutor),

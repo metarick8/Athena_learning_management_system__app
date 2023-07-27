@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id('tutor_id');
             $table->unsignedBigInteger('user_id');
             $table->text('bio');
-            $table->double('rate');
-            $table->string('id_photo');
-            $table->string('certification');
-            $table->string('c_v');
+            $table->double('rate')->default(0);
+            $table->string('id_photo')->nullable();
+            $table->string('certification')->nullable();
+            $table->string('c_v')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
         });

@@ -15,26 +15,45 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
     use Response;
+    public function __invoke()
+    {
+        Storage::makeDirectory('Users');
+        Storage::makeDirectory('Tutors');
+
+    }
 
     public function register(Request $request)
     {
        // $request->validated();
+        if(User::count()==0){
+            $makeDirectories = new UserController();
+            $makeDirectories->__invoke();
+        }
 
+        $path = '';
         $user = User::create([
             'username' => $request->username,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'picture' => $request->picture,
+            'picture' => $path,
             'phone_number' => $request->phone_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_tutor' => false
 
         ]);
+        
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $image_name = $image->getClientOriginalName();
+            $path = $image->storeAs('/Users', $image_name);
+            $user->picture = $path;
+        }
         /*$user->sendEmailVerificationNotification();
         return response()->json(['message' => 'Registration successful. Please check your email for verification.']);*/
         /*$token =$user->createToken('API Token of' . $user->name)->plainTextToken;

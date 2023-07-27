@@ -38,10 +38,6 @@ class CourseController extends Controller
             'level' => $request->level,
             'tutor_id'=> $tutor_id,
             'category_id'=>$request->category_id,
-            'path' => 'path\to\smth',
-            'cover_path' => 'path\to\smth',
-            'total_course_duration'=> '11:11:11',
-            'total_modules' => 3,
         ]);
 
         foreach ($request->modules as $module) {
