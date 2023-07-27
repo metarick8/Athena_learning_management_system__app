@@ -46,7 +46,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
-    Route::get('logout/{addDevices}', [UserController::class, 'logout']);
+    Route::get('logout/{allDevices}', [UserController::class, 'logout']);
     //////////////////////Course///////////////////////////
 Route::get('/allCourses', [CourseController::class, 'getCourses']);
 Route::post('/addCourse', [CourseController::class, 'addCourse']);
