@@ -36,7 +36,7 @@ class TutorController extends Controller
             'bio' => $request->bio,
             'rate' => 0,
         ]);
-        $id = $request->file('identify');
+        /*$id = $request->file('identify');
         $idPathName = $id->getClientOriginalName();
         $idPath = $id->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
         $certif = $request->file('certification');
@@ -47,7 +47,7 @@ class TutorController extends Controller
         $cvPath = $cv->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $cvName);
         $tutor->id_photo = $idPath;
         $tutor->certification = $certifPath;
-        $tutor->c_v = $cvPath;
+        $tutor->c_v = $cvPath;*/
         $tutor = User::with('tutor')->find($user->id);
         return response()->json([
             'tutor' => new TutorResource($tutor),

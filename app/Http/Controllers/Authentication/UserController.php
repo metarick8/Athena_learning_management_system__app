@@ -22,8 +22,8 @@ class UserController extends Controller
     use Response;
     public function __invoke()
     {
-        Storage::makeDirectory('Users');
-        Storage::makeDirectory('Tutors');
+        Storage::makeDirectory('Public/Users');
+        Storage::makeDirectory('public/Tutors');
 
     }
 
@@ -47,11 +47,12 @@ class UserController extends Controller
             'is_tutor' => false
 
         ]);
-        
+
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image_name = $image->getClientOriginalName();
-            $path = $image->storeAs('/Users', $image_name);
+            $image_name =$user->id . $image->getClientOriginalName();
+            $path = $image->storeAs('Public/Users', $image_name);
+
             $user->picture = $path;
         }
         /*$user->sendEmailVerificationNotification();
@@ -62,7 +63,7 @@ class UserController extends Controller
         use Laravel\Passport\PersonalAccessTokenResult;*/
         //return response()->json(['user' => $user]);
 // Create a new access token
-        return response()->json([
+        return $this->success([
             'user' => new UserResource($user),
             'token' => $user->createToken('API Token of ' . $user->name)->accessToken
         ]);
@@ -94,7 +95,7 @@ class UserController extends Controller
             return  $this->error('','Credentials do not match', 401);
         $user = User::where('email', $request->email)->first();
         if ($user->is_tutor){
-        $tutor = User::with('tutors')->where('email', $request->email)->first();
+            $tutor = User::with('tutor')->where('email', $request->email)->first();
             return $this->success([
                 'user' => new TutorResource($tutor),
                 'token' => $user->createToken('API Token of ' . $user->name)->accessToken

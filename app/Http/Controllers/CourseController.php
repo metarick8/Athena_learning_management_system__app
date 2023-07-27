@@ -43,9 +43,7 @@ class CourseController extends Controller
         foreach ($request->modules as $module) {
             $createdModule = $course->modules()->create([
                 'title' => $module['title'],
-                'description' => $module['description'],
-                'total_videos' => 3,
-                'path' => 'path',
+                'description' => $module['descri\ption'],
             ]);
 
             foreach ($module['videos'] as $video) {

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('gender', ['male', 'female']);
-            $table->integer('phone_number')->default('1234567890');
+            $table->string('phone_number')->default('1234567890');
             $table->integer('budget')->default(0);
             $table->boolean('is_tutor')->default(false);
             $table->timestamps();

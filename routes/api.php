@@ -22,7 +22,7 @@ Route::post('/UserRegister', [UserController::class,'register']);
 Route::post('/login', [UserController::class,'login']);
 */
 Route::controller(UserController::class)->group(function(){
-    Route::post('UserRegister', 'register');
+    Route::post('user/register', 'register');
     Route::post('login', 'login');
     Route::get('logout', 'logout');
 })->middleware('auth:api');

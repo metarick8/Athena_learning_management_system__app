@@ -40,7 +40,7 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     public function tutor(): HasOne{
-        return $this->hasOne(Tutor::class, 'user_id', 'user_id');
+        return $this->hasOne(Tutor::class, 'user_id', 'id');
     }
     public function tutors_follow(): BelongsToMany{
         return $this->belongsToMany(Tutor::class, 'follow', 'user_id', 'tutor_id');
