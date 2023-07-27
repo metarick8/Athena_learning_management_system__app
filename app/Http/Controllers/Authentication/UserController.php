@@ -22,7 +22,7 @@ class UserController extends Controller
     use Response;
     public function __invoke()
     {
-        Storage::makeDirectory('Public/Users');
+        Storage::makeDirectory('public/Users');
         Storage::makeDirectory('public/Tutors');
 
     }
@@ -51,7 +51,7 @@ class UserController extends Controller
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $image_name =$user->id . $image->getClientOriginalName();
-            $path = $image->storeAs('Public/Users', $image_name);
+            $path = $image->storeAs('public/Users', $image_name);
             $user->picture = $path;
             $user->save();
         }

@@ -6,6 +6,7 @@ use App\Models\Tutor;
 use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -34,7 +35,11 @@ class CourseController extends Controller
             //$request->get($i);
             $video = $request->file($i);
             $idPathName = $video->getClientOriginalName();
-            $result = str_after($idPathN, 'module');
+            $idPathName= 'module1   '
+            $parts = explode("|", $string); // Split the string into an array using the "|" delimiter
+            $filename = explode(".", $parts[1])[0]; // Split the second part of the array using the "." delimiter and get the first element
+            $idPathName = 'module10';
+            return $result = Str::after($idPathName, 'module');
             $idPath = $video->storeAs('public/Tutors/'. $tutor_id . '/Courses', $idPathName);
         }
         /*$string = "module10|title.jphg";
