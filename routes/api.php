@@ -24,7 +24,6 @@ Route::post('/login', [UserController::class,'login']);
 Route::controller(UserController::class)->group(function(){
     Route::post('user/register', 'register');
     Route::post('login', 'login');
-    Route::get('logout', 'logout');
 })->middleware('auth:api');
 Route::post('TutorRegister', [TutorController::class, 'register']);
 
@@ -47,6 +46,7 @@ Route::post('/email/verification-notification', function (Request $request) {
 
 Route::group(['middleware' => 'auth:api'], function () {
 
+    Route::get('logout', [UserController::class, 'logout']);
     //////////////////////Course///////////////////////////
 Route::get('/allCourses', [CourseController::class, 'getCourses']);
 Route::post('/addCourse', [CourseController::class, 'addCourse']);

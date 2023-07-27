@@ -52,7 +52,6 @@ class UserController extends Controller
             $image = $request->file('image');
             $image_name =$user->id . $image->getClientOriginalName();
             $path = $image->storeAs('Public/Users', $image_name);
-
             $user->picture = $path;
         }
         /*$user->sendEmailVerificationNotification();
@@ -116,18 +115,20 @@ class UserController extends Controller
     }
 
     public function logout(Request $request){
-        return Auth::id();
+        Auth::id();
         //return $user = Auth::guard('api')->user();
         //return Auth::guard('api')->check();
-        /*return $accessToken = Auth::user()->token()   ;
+        /*return
         /*DB::table('oauth_refresh_tokens')
         ->where('access_token_id', $accessToken->id)
         ->update(['revoked' => true]);
-        $accessToken->revoke();*/
-        /*Auth::user()->currentAccessToken()->delete();
+
+        //Auth::user()->currentAccessToken()->delete();*/
+        $accessToken = Auth::user()->token();
+        $accessToken->revoke();
         return $this->success([
             'message' => 'You have successfully been logged out and your token has been deleted.'
-        ]);*/
+        ]);
 
     }
 
