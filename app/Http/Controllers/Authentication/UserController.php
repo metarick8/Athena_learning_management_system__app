@@ -115,13 +115,15 @@ class UserController extends Controller
     }
 
     public function logout($allDevices){
-
         if(Auth::id()!=null){
-            if($allDevices)
+            $accessToken = Auth::user()->token();
+            if($allDevices){
                 DB::table('oauth_access_tokens')
                     ->where('user_id', $accessToken->user_id)->delete();
-
-            $accessToken = Auth::user()->token();
+                return $this->success([
+                    'message' => 'You have successfully been logged out from all devices.'
+                ]);
+            }
             $accessToken->revoke();
             $accessToken->delete();
 
