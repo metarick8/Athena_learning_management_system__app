@@ -26,6 +26,9 @@ class CourseController extends Controller
         ]);
     }
     public function addCourse(Request $request){
+        return  $request->list;
+
+        /*
         $user_id = Auth::id();
         $tutor = Tutor::where('user_id', $user_id)->first();
         if ($tutor)
@@ -56,7 +59,7 @@ class CourseController extends Controller
         }
 
         $course = Course::with('modules.videos')->where('course_id', $course->course_id)->get();
-        return $course;
+        return $course;*/
     }
 
     /*public function deleteCourse($id){
