@@ -53,6 +53,7 @@ class UserController extends Controller
             $image_name =$user->id . $image->getClientOriginalName();
             $path = $image->storeAs('Public/Users', $image_name);
             $user->picture = $path;
+            $user->save();
         }
         /*$user->sendEmailVerificationNotification();
         return response()->json(['message' => 'Registration successful. Please check your email for verification.']);*/

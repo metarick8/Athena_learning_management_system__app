@@ -26,8 +26,22 @@ class CourseController extends Controller
         ]);
     }
     public function addCourse(Request $request){
-        return  $request->list;
+        $user_id = Auth::id();
+        $tutor = Tutor::where('user_id', $user_id)->first();
+        if ($tutor)
+           $tutor_id = $tutor->tutor_id;
+        for ($i=1; $i <= $request->number ; $i++) {
+            //$request->get($i);
+            $video = $request->file($i);
+            $idPathName = $video->getClientOriginalName();
+            $result = str_after($idPathN, 'module');
+            $idPath = $video->storeAs('public/Tutors/'. $tutor_id . '/Courses', $idPathName);
+        }
+        /*$string = "module10|title.jphg";
+        $parts = explode("|", $string); // Split the string into an array using the "|" delimiter
+        $filename = explode(".", $parts[1])[0]; // Split the second part of the array using the "." delimiter and get the first element
 
+echo $filename; // Output: "title"*/
         /*
         $user_id = Auth::id();
         $tutor = Tutor::where('user_id', $user_id)->first();

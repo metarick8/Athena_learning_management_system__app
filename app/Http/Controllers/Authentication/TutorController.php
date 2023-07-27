@@ -18,15 +18,16 @@ class TutorController extends Controller
 
     public function register(Request $request)
     {
-       // $request->validated();
+       //$request->validated();
+       $path='';
         $user = User::create([
             'username' => $request->username,
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
-            'picture' => $request->picture,
             'phone_number' => $request->phone_number,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'picture' => $path,
             'is_tutor' => true
 
         ]);
@@ -36,19 +37,27 @@ class TutorController extends Controller
             'bio' => $request->bio,
             'rate' => 0,
         ]);
-        /*$id = $request->file('identify');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $image_name =$user->id . $image->getClientOriginalName();
+            $path = $image->storeAs('public/Tutors/' . $tutor->tutor_id . '/Information', $image_name);
+            $user->picture = $path;
+            $user->save();
+        }
+        $id = $request->file('identify');
         $idPathName = $id->getClientOriginalName();
-        $idPath = $id->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
+        $idPath = $id->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
         $certif = $request->file('certification');
         $certifName = $certif->getClientOriginalName();
-        $certifPath = $certif->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $certifName);
-        $cv = $request->file('C-V');
+        $certifPath = $certif->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $certifName);
+        $cv = $request->file('C_V');
         $cvName = $cv->getClientOriginalName();
-        $cvPath = $cv->storeAs('/Tutors/'. $tutor->tutor_id . '/Information', $cvName);
+        $cvPath = $cv->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $cvName);
         $tutor->id_photo = $idPath;
         $tutor->certification = $certifPath;
-        $tutor->c_v = $cvPath;*/
-        $tutor = User::with('tutor')->find($user->id);
+        $tutor->c_v = $cvPath;
+        $tutor->save();
+        return $tutor = User::with('tutor')->find($user->id);
         return response()->json([
             'tutor' => new TutorResource($tutor),
             'token' => $tutor->createToken('API Token of ' . $tutor->name)->accessToken
