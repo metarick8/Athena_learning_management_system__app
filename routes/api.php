@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/UserRegister', [UserController::class,'register']);
 Route::post('/login', [UserController::class,'login']);
 */
+
+//
 Route::controller(UserController::class)->group(function(){
     Route::post('user/register', 'register');
     Route::post('login', 'login');
