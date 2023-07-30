@@ -58,8 +58,8 @@ class TutorController extends Controller
         $tutor->certification = $certifPath;
         $tutor->c_v = $cvPath;
         $tutor->save();
-        return $tutor = User::with('tutor')->find($user->id);
-        return response()->json([
+        $tutor = User::with('tutor')->find($user->id);
+        return $this->success([
             'tutor' => new TutorResource($tutor),
             'token' => $tutor->createToken('API Token of ' . $tutor->name)->accessToken
         ]);
