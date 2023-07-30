@@ -22,13 +22,14 @@ class UserController extends Controller
     use Response;
     public function __invoke()
     {
-        Storage::makeDirectory('public/Users');
-        Storage::makeDirectory('public/Tutors');
+        Storage::makeDirectory('Users');
+        Storage::makeDirectory('Tutors');
 
     }
 
     public function register(Request $request)
     {
+
        // $request->validated();
         if(User::count()==0){
             $makeDirectories = new UserController();
@@ -47,11 +48,13 @@ class UserController extends Controller
             'is_tutor' => false
 
         ]);
+        $user->sendEmailVerificationNotification();
+        return 'email pending to verify';
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
             $image_name =$user->username .'.'. $image->getClientOriginalExtension();
-            $path = $image->storeAs('public/Users', $image_name);
+            $path = $image->storeAs('Users', $image_name);
             $user->picture = $path;
             $user->save();
         }
@@ -111,7 +114,7 @@ class UserController extends Controller
             ]);*/
         return $this->success([
             'user' => new UserResource($user),
-            'token' => $user->createToken('API Token of ' . $user->name)->accessToken
+                
         ]);
     }
 

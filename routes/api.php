@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Authentication\TutorController;
 use App\Http\Controllers\Authentication\UserController;
+use App\Http\Controllers\Authentication\VerificationController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\SubscriptionController;
@@ -21,8 +22,6 @@ use Illuminate\Support\Facades\Route;
 Route::post('/UserRegister', [UserController::class,'register']);
 Route::post('/login', [UserController::class,'login']);
 */
-
-//
 Route::controller(UserController::class)->group(function(){
     Route::post('user/register', 'register');
     Route::post('login', 'login');
@@ -30,21 +29,8 @@ Route::controller(UserController::class)->group(function(){
 Route::post('TutorRegister', [TutorController::class, 'register']);
 
 //
-Route::get('/email/verify', function () {
-    return view('auth.verif y-email');
-})->middleware('auth')->name('verification.notice');
-Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-    $request->fulfill();
-
-    return redirect('/home');
-})->middleware(['auth', 'signed'])->name('verification.verify');
-Route::post('/email/verification-notification', function (Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-
+Route::get('email/verify/{id}', [VerificationController::class, 'verify'])->name('verification.verify'); // Make sure to keep this as your route name
+Route::get('email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
 
 Route::group(['middleware' => 'auth:api'], function () {
 

@@ -39,20 +39,21 @@ class TutorController extends Controller
         ]);
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $image_name =$user->id . $image->getClientOriginalName();
-            $path = $image->storeAs('public/Tutors/' . $tutor->tutor_id . '/Information', $image_name);
-            $user->picture = $path;
+            $image_name =$user->id . '.' . $image->getClientOriginalExtension();
+            $path = $image->storeAs('Tutors/' . $tutor->tutor_id . '/Information', $image_name);
+            $url = url($path);
+            $user->picture = $url;
             $user->save();
         }
         $id = $request->file('identify');
         $idPathName = $id->getClientOriginalName();
-        $idPath = $id->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
+        $idPath = $id->storeAs('Tutors/'. $tutor->tutor_id . '/Information', $idPathName);
         $certif = $request->file('certification');
         $certifName = $certif->getClientOriginalName();
-        $certifPath = $certif->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $certifName);
+        $certifPath = $certif->storeAs('Tutors/'. $tutor->tutor_id . '/Information', $certifName);
         $cv = $request->file('C_V');
         $cvName = $cv->getClientOriginalName();
-        $cvPath = $cv->storeAs('public/Tutors/'. $tutor->tutor_id . '/Information', $cvName);
+        $cvPath = $cv->storeAs('Tutors/'. $tutor->tutor_id . '/Information', $cvName);
         $tutor->id_photo = $idPath;
         $tutor->certification = $certifPath;
         $tutor->c_v = $cvPath;

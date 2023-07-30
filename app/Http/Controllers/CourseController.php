@@ -6,7 +6,6 @@ use App\Models\Tutor;
 use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class CourseController extends Controller
 {
@@ -26,74 +25,53 @@ class CourseController extends Controller
             'message' => $courses
         ]);
     }
+// just random commit
     public function addCourse(Request $request){
         $user_id = Auth::id();
         $tutor = Tutor::where('user_id', $user_id)->first();
         if ($tutor)
            $tutor_id = $tutor->tutor_id;
-        for ($i=1; $i <= $request->number ; $i++) {
-            //$request->get($i);
-            $video = $request->file($i);
-            $idPathName = $video->getClientOriginalName();
-            $idPathName= 'module1   '
-            $parts = explode("|", $string); // Split the string into an array using the "|" delimiter
-            $filename = explode(".", $parts[1])[0]; // Split the second part of the array using the "." delimiter and get the first element
-            $idPathName = 'module10';
-            return $result = Str::after($idPathName, 'module');
-            $idPath = $video->storeAs('public/Tutors/'. $tutor_id . '/Courses', $idPathName);
-        }
-        /*$string = "module10|title.jphg";
-        $parts = explode("|", $string); // Split the string into an array using the "|" delimiter
-        $filename = explode(".", $parts[1])[0]; // Split the second part of the array using the "." delimiter and get the first element
-
-echo $filename; // Output: "title"*/
-        /*
-        $user_id = Auth::id();
-        $tutor = Tutor::where('user_id', $user_id)->first();
-        if ($tutor)
-           $tutor_id = $tutor->tutor_id;
-
         $course =Course::create([
             'title' => $request->title,
             'description' => $request->description,
-            'price' => $request->price,
+            'price' => intVal($request->price),
             'level' => $request->level,
             'tutor_id'=> $tutor_id,
-            'category_id'=>$request->category_id,
+            'category_id'=> intval($request->category_id),
+            'total_modules' => intval($request->totalModules)
         ]);
-
-        foreach ($request->modules as $module) {
+        $input = json_decode($request->modules);
+        $index = 0; // the index represents the key name from front-end as the key of each video being send
+        foreach ($input as $module) {
             $createdModule = $course->modules()->create([
-                'title' => $module['title'],
-                'description' => $module['descri\ption'],
+                'title' => $module->title,
+                'description' => $module->description,
             ]);
 
-            foreach ($module['videos'] as $video) {
-                $createdModule->videos()->create([
-                    'title' => $video['title'],
+            foreach ($module->videos as $video) {
+                $createdVideo = $createdModule->videos()->create([
+                    'title' => $video->title,
                     'path' => 'path',
-                    'duration' => $video['duration']
+                    'duration' => $video->duration
                 ]);
+            $storingVideo = $request->file(strval($index));
+            $image_name =  $createdVideo->video_id .'.'. $storingVideo->getClientOriginalExtension();
+            $path = $storingVideo->storeAs('Tutors/'. $tutor->tutor_id . '/Courses/'. $course->course_id . '/Modules/' . $createdModule->module_id, $image_name);
+            $createdVideo->path = $path;
+            $createdVideo->save();
+            $index++;
             }
         }
 
-        $course = Course::with('modules.videos')->where('course_id', $course->course_id)->get();
-        return $course;*/
+        if ($request->hasFile('cover')) {
+            $image = $request->file('cover');
+            $image_name =  'cover.'. $image->getClientOriginalExtension();
+            $path = $image->storeAs('Tutors/'. $tutor->tutor_id . '/Courses/'. $course->course_id, $image_name);
+            $course->cover_path = $path;
+            $course->save();
+        }
+        return $course;
     }
-
-    /*public function deleteCourse($id){
-        $course=Course::where("course_id",$id);
-        $course->delete();
-        return response()->json([
-            "course"=>"done baby ",
-        ]);
-    }
-    public function showCourse($id){
-        $course=Course::find($id);
-        return response()->json([
-            "course"=>$course
-        ]);
-    }*/
 
     public function findCourse(Request $request,$id){
         switch($id){
