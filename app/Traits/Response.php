@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 trait Response{
-    protected function success($data, $message=null, $code=200)
+    protected function success($data=null, $message=null, $code=200)
     {
         return response()->json([
             'status' => true,

@@ -48,8 +48,6 @@ class UserController extends Controller
             'is_tutor' => false
 
         ]);
-        $user->sendEmailVerificationNotification();
-        return 'email pending to verify';
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -58,45 +56,30 @@ class UserController extends Controller
             $user->picture = $path;
             $user->save();
         }
-        /*$user->sendEmailVerificationNotification();
-        return response()->json(['message' => 'Registration successful. Please check your email for verification.']);*/
-        /*$token =$user->createToken('API Token of' . $user->name)->plainTextToken;
-        dd($token);
-        //return response()->json(['user' => $user]);
-        use Laravel\Passport\PersonalAccessTokenResult;*/
-        //return response()->json(['user' => $user]);
-// Create a new access token
-        return $this->success([
-            'user' => new UserResource($user),
-            'token' => $user->createToken('API Token of ' . $user->name)->accessToken
-        ]);
 
-// $token = $user->createToken('My Token');
-
-// // Get the access token result object
-// $tokenResult = $token->accessToken;
-
-// // Get the access token string
-// $accessToken = $tokenResult->token;
-
-// // Use the access token string
-// return $accessToken;
+        $user->sendEmailVerificationNotification();
+        return $this->success('','email pending to verify');
      }
 
-     public function verify(EmailVerificationRequest $request)
-     {
-         $request->fulfill();
+     public function resend($id) {
+        $user = User::findOrFail($id);
+        if ($user->hasVerifiedEmail()) {
+            return $this->error('', 'Email already verified.', 400);
+        }
 
-         return response()->json(['message' => 'Email verified successfully.']);
-     }
+        $user->sendEmailVerificationNotification();
+
+        return $this->success('','Email verification link sent on your email id');
+    }
 
 
     public function login(Request $request)
     {
-        //$request->validated($request->all());
         if(!Auth::attempt(['email' => $request->email, 'password' => $request->password]))
             return  $this->error('','Credentials do not match', 401);
         $user = User::where('email', $request->email)->first();
+        /*if($user->email_verified_at == null)
+            return  $this->error('','Email not Verified', 400);*/
         if ($user->is_tutor){
             $tutor = User::with('tutor')->where('email', $request->email)->first();
             return $this->success([
@@ -114,7 +97,8 @@ class UserController extends Controller
             ]);*/
         return $this->success([
             'user' => new UserResource($user),
-                
+            'token' => $user->createToken('API Token of ' . $user->name)->accessToken
+
         ]);
     }
 
