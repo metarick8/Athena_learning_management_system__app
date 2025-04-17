@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 class VideoController extends Controller
 {
-    public function addVideo(Request $request){
+    public function addVideo(Request $request,$id){
         $video =Video::create([
             'title' => $request->title,
             'duration' => $request->duration,
             'path' => $request->path,
-            'module_id'=>1,
+            'module_id'=>$id,
         ]);
         return response()->json([
             "massage"=>"Video has been added Sucsessfully!",

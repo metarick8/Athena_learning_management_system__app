@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id('rate_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('course_id');
-            $table->double('rate');
+            $table->double('rate')->default(0.0);
             $table->text('opinion')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('user_id')->on('users');

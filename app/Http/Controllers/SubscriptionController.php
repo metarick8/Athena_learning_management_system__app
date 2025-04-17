@@ -9,51 +9,46 @@ use App\Models\Fan;
 use App\Http\Controllers\FanController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Exception;
 class SubscriptionController extends Controller
 {
-    public function subscripe(Request $request){
-        $user_id=Auth::id();
-        $user=User::where("user_id",$user_id)->get();
-        $course=course::where("course_id",$request->course_id)->get();
-        $tutor = User::where("user_id",Tutor::where("tutor_id",$course->tutor_id)->get()->user_id)->get();
-        $fan=new FanController();
-        $is_fan=$fan->is_fan($user_id,$course->tutor_id);
+    public function subscripe($id){
+        // $user_id=Auth::id();
+        $user_id=2;
+        $user=User::where("user_id",$user_id)->first();
+        $course=course::where("course_id",$id)->first();
+        $tutor = User::where("user_id",Tutor::where("tutor_id",$course->tutor_id)->first()->user_id)->first();
         $price= $course->price;
-        $courses=Course::where('tutor_id',$course->tutor_id);
-        $Subscriptions=Subscription::where('user_id',$user_id)->where('course_id',$courses->course_id);
-        if($Subscriptions->count()>5){
+        //all user subs at that same tutor courses
+        $Subscriptions=Subscription::join('courses','courses.course_id','=','subscriptions.course_id')
+        ->where('subscriptions.user_id', $user_id)->get();
+        if($Subscriptions->count()>3){
         Fan::create([
             'user_id'=>$user_id,
             'tutor_id'=>$course->tutor_id,
         ])->save();
         }
+        $fan=new FanController();
+        $is_fan=$fan->is_fan($user_id,$course->tutor_id);
         if($is_fan==true)
-                $price=0.2*$course->price;
+                $price=$price - 0.25*$course->price;
         if($user->budget < $price)
         {
             return response()->json([
-                "sorry"=>"you Don't have enough money!",
+                "massage"=>"Sorry! you Don't have enough money!",
             ]);
         }
         Subscription::create([
             'user_id' => $user_id,
-            'course_id'=> $request->course_id ,
-        ]);
+            'course_id'=> $id ,
+        ])->save();
         $user->budget =  $user->budget - $price;
+        $user->save();
         $tutor->budget =  $tutor->budget + $price;
+        $tutor->save();
         return response()->json([
-                "Done"=>"your just Subscribed and you have to pay"+ $price,
+                "massage"=>"your just Subscribed and you have to pay ". $price,
             ]);
-    }
+        }
 
-}
-// else{
-//     $courses=Course::where('tutor_id',$course->tutor_id);
-//     foreach($cours as $courses)
-//     $Subscriptions=Subscription::where('user_id',$user_id)->where('course_id',$cours->course_id);
-//     if($Subscriptions->count()>5)
-//         Fan::create([
-//             'user_id'=>$user_id,
-//             'tutor_id'=>$course->tutor_id,
-//         ])->save();
-// }
+    }

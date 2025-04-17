@@ -20,14 +20,14 @@ class CourseController extends Controller
         ]);
     }
     public function addCourse(Request $request){
-        $tutor_id=Auth::id();
+        // $tutor_id=Auth::id();
         $course =Course::create([
             'title' => $request->title,
             'description' => $request->description,
             'price' => $request->price,
             'level' => $request->level,
-            'tutor_id'=> 2,
-            'category_id'=>2,
+            'tutor_id'=> 1,
+            'category_id'=>1,
             'total_course_duration'=> '11:11:11',
             'total_modules' => 3,
         ]);
@@ -44,9 +44,18 @@ class CourseController extends Controller
         ]);
     }
     public function showCourse($id){
-        $course=Course::find($id);
+        $course=Course::where('course_id',$id)->get([
+            "course_id",
+            "title",
+            "description",
+            "price",
+            "level",
+            "total_course_duration",
+            "total_modules",
+        ]);
         return response()->json([
-            "course"=>$course
+            //nested json
+            "massage"=>$course
         ]);
     }
     public function findCourse(Request $request,$id){

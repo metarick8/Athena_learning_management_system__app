@@ -28,7 +28,8 @@ class WatchLaterController extends Controller
         $user_id = Auth::id();
         //join
         /*
-        $Courses=Course::join('watch_later','courses.course_id','=','watch_later.course_id')->where('watch_later.user_id', $user_id)->get([
+        $Courses=Course::join('watch_later','courses.course_id','=','watch_later.course_id')
+        ->where('watch_later.user_id', $user_id)->get([
             "title",
             "description",
             "price",
@@ -59,7 +60,7 @@ class WatchLaterController extends Controller
     }
         catch(Exception $e){
             return response()->json([
-                "Wish List" => $e,
+                "massage" => $e,
             ],500);
         }
     }

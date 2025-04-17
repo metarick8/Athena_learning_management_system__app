@@ -19,11 +19,6 @@ class Video extends Model
         'path',
     ];
 
-
-
-    public function attached_file(): HasOne{
-        return $this->hasOne(Attached_file::class, 'video_id', 'video_id');
-    }
     public function module(): BelongsTo{
         return $this->belongsTo(Module::class, 'module_id', 'module_id');
     }
